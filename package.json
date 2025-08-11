@@ -1,0 +1,28 @@
+{
+    "name": "trinity-profiles-sdk",
+    "version": "1.0.0",
+    "description": "TypeScript SDK for Trinity Patient Profile Management System",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "dev": "tsc --watch",
+        "type-check": "tsc --noEmit",
+        "build": "tsc",
+        "test": "node test-sdk.js"
+    },
+    "keywords": [
+        "trinity",
+        "patient",
+        "profiles",
+        "healthcare",
+        "sdk",
+        "typescript"
+    ],
+    "author": "Eka Care",
+    "license": "MIT",
+    "devDependencies": {
+        "typescript": "^5.0.0",
+        "@types/node": "^20.0.0"
+    },
+    "dependencies": {}
+}
