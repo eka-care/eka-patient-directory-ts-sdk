@@ -259,5 +259,4 @@ export interface SdkConfig {
     /** Request timeout in milliseconds */
     timeout?: number;
     /** Enable local search functionality */
-    enableLocalSearch?: boolean;
 }

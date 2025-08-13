@@ -1,5 +1,5 @@
 {
-    "name": "trinity-profiles-sdk",
+    "name": "patient-ts-sdk",
     "version": "1.0.0",
     "description": "TypeScript SDK for Trinity Patient Profile Management System",
     "main": "dist/index.js",

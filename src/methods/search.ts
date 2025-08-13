@@ -28,7 +28,7 @@ export class SearchMethods {
         this.config = config || null;
         
         // Initialize local search components if enabled
-        if (config?.enableLocalSearch && config.workspaceId) {
+        if (config && config.workspaceId) {
             this.indexedDB = new IndexedDBService(config.workspaceId);
             this.dataLoader = new DataLoaderService(config);
         }
@@ -96,7 +96,7 @@ export class SearchMethods {
         }
 
         // Check if we should use local search
-        if (!forceApiSearch && this.indexedDB && this.config?.enableLocalSearch) {
+        if (!forceApiSearch && this.indexedDB) {
             if (!this.isSyncComplete) {
                 throw new Error('Data is still syncing. Please wait for sync to complete or use forceApiSearch=true');
             }
@@ -131,6 +131,8 @@ export class SearchMethods {
      * @param select Optional comma-separated list of fields to return
      * @returns Array of matching patients
      */
+
+    // SEARCH PATIENT BY PREFIX
     async searchByPrefix(prefix: string, limit: number = 50, select?: string): Promise<Patient[]> {
         return this.search({ prefix, limit, select });
     }

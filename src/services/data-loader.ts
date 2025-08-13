@@ -129,7 +129,9 @@ export class DataLoaderService {
             }
 
             // Fetch page data
-            const patients = await this.minifiedMethods.getPage(page, limit);
+            const patientsResponse = await this.minifiedMethods.getPage(page, limit);
+            const patients = patientsResponse?.data || [];
+
 
             if (patients.length === 0) {
                 break; // No more data
@@ -143,6 +145,7 @@ export class DataLoaderService {
                 mobile: p.mobile,
                 username: p.username
             }));
+
 
             // Store in IndexedDB
             await this.indexedDB.batchStore(localPatients);

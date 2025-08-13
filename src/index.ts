@@ -29,13 +29,14 @@ import { HttpClient } from './client';
 import { PatientMethods } from './methods/patients';
 import { SearchMethods } from './methods/search';
 import { UtilsMethods } from './methods/utils';
-import { SdkConfig } from './types';
+import { CreatePatientData, Patient, SdkConfig } from './types';
 
 /**
  * Main SDK class
  */
 export class TrinityProfilesSDK {
     private client: HttpClient;
+    private static instance: TrinityProfilesSDK | null = null;
 
     /** Patient CRUD operations */
     public patients: PatientMethods;
@@ -79,8 +80,54 @@ export class TrinityProfilesSDK {
 
         // Initialize method groups
         this.patients = new PatientMethods(this.client);
+
+        console.log(config, "config in index")
         this.search = new SearchMethods(this.client, config);
         this.utils = new UtilsMethods(this.client);
+    }
+
+    /**
+     * Static method to get the singleton instance with optional initialization
+     * 
+     * @param config Optional SDK configuration for initialization
+     * @returns Singleton instance of TrinityProfilesSDK
+     * 
+     * @example
+     * ```typescript
+     * // Get instance without initialization
+     * const sdk = TrinityProfilesSDK.getInstance();
+     * 
+     * // Get instance with initialization
+     * const sdk = TrinityProfilesSDK.getInstance({
+     *   baseUrl: 'https://api.trinity.example.com',
+     *   accessToken: 'your-jwt-token',
+     *   workspaceId: 'your-workspace-id'
+     * });
+     * ```
+     */
+    public static getInstance(config?: SdkConfig): TrinityProfilesSDK {
+        if (!TrinityProfilesSDK.instance) {
+            if (!config) {
+                throw new Error('Configuration is required for first initialization. Please provide SdkConfig.');
+            }
+            TrinityProfilesSDK.instance = new TrinityProfilesSDK(config);
+        }
+        return TrinityProfilesSDK.instance;
+    }
+
+    /**
+     * Reset the singleton instance (useful for testing or re-initialization)
+     * 
+     * @example
+     * ```typescript
+     * TrinityProfilesSDK.resetInstance();
+     * ```
+     */
+    public static resetInstance(): void {
+        if (TrinityProfilesSDK.instance) {
+            TrinityProfilesSDK.instance.destroy();
+            TrinityProfilesSDK.instance = null;
+        }
     }
 
     /**
@@ -106,7 +153,6 @@ export class TrinityProfilesSDK {
             accessToken: newToken,
             workspaceId: currentConfig.workspaceId || '',
             timeout: currentConfig.timeout,
-            enableLocalSearch: currentConfig.enableLocalSearch
         };
 
         // Create new client with updated token
@@ -150,16 +196,43 @@ export class TrinityProfilesSDK {
      * await sdk.initializeLocalSearch();
      * ```
      */
+
+    // TO LOAD DATA
     async initializeLocalSearch(): Promise<void> {
+
         await this.search.initializeLocalSearch();
+
+
         
         // Start sync if enabled and Worker is supported
-        if (this.shouldUseWorker()) {
-            await this.startSyncWithWorker();
-        } else if (this.isLocalSearchEnabled()) {
+
+        if (this.isLocalSearchEnabled()) {
             await this.startSyncWithoutWorker();
         }
+
+        // TODO
+        // if (this.shouldUseWorker()) {
+        //     console.log("worker")
+        //     await this.startSyncWithWorker();
+        // } else if (this.isLocalSearchEnabled()) {
+        //     console.log("without worker")
+        //     await this.startSyncWithoutWorker();
+        // }
+
     }
+
+
+    // TO SEARCH
+    async searchPatientByPrefix(prefix: string, limit: number = 50, select?: string): Promise<Patient[]> {
+        return await this.search.searchByPrefix(prefix, limit, select);
+    }
+
+    // TO CREATE PATIENT
+    async createPatient(patient: CreatePatientData): Promise<Patient | { oid: string }> {
+        return await this.patients.create(patient);
+    }
+
+    // TO UPDATE PATIENT
 
     /**
      * Start background data synchronization
@@ -247,7 +320,7 @@ export class TrinityProfilesSDK {
      */
     private isLocalSearchEnabled(): boolean {
         const config = this.client.getConfig();
-        return Boolean(config.enableLocalSearch && config.workspaceId);
+        return Boolean(config.workspaceId);
     }
 
     /**
@@ -356,4 +429,4 @@ export * from './errors';
 export * from './types';
 
 // Default export
-export default TrinityProfilesSDK;
+export const getTrinitySDKInstance = (config: SdkConfig) => TrinityProfilesSDK.getInstance(config);

@@ -70,6 +70,7 @@ export class HttpClient {
     async request<T = any>(options: RequestOptions): Promise<HttpResponse<T>> {
         const url = this.buildUrl(options.path, options.params);
         const headers = this.buildHeaders(options.headers);
+        headers["client-id"] = "pt-directory-sdk"
 
         const requestInit: RequestInit = {
             method: options.method,
