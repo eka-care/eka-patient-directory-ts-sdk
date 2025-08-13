@@ -10,11 +10,11 @@ const { TrinityProfilesSDK } = require('./src/index.ts');
 async function exampleLocalSearch() {
     // Initialize SDK with local search enabled
     const sdk = new TrinityProfilesSDK({
-        baseUrl: 'https://your-api-url.com',
-        accessToken: 'your-access-token',
-        workspaceId: 'your-workspace-id',
+        baseUrl: 'https://api.eka.care',
+        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkb2Mtd2ViIiwiYi1pZCI6Ijc3MDg4MTY2OTk2NzI0IiwiY2MiOnsiZG9jLWlkIjoiMTczNjU4ODIyMTIyODg0IiwiZXNjIjoxLCJpcy1kIjp0cnVlfSwiZG9iIjoiMTk5MC0wNy0wMyIsImRvYy1pZCI6IjE3MzY1ODgyMjEyMjg4NCIsImV4cCI6MTc1NTA4NTg3MCwiZm4iOiJOZWhhIiwiZ2VuIjoiRiIsImlhdCI6MTc1NTA4MjI3MCwiaWRwIjoibW9iIiwiaXMtZCI6dHJ1ZSwiaXNzIjoiZW1yLmVrYS5jYXJlIiwibG4iOiJKYWdhZGVlc2giLCJtbiI6InRydWUiLCJvaWQiOiIxNzM2NTg4MjIxMjI4ODQiLCJwcmkiOnRydWUsInIiOiJJTiIsInV1aWQiOiJmYzQ1Mjg4NS04M2U1LTQ2NmMtYjQ1Yy01M2U3NDNmZjI0MjgifQ.s9mnXXnfjbFfnWC48_EVxuDS8X_qRm-xCCiurb60Ch0',
+        workspaceId: '77088166996724',
         enableLocalSearch: true,
-        timeout: 30000
+        timeout: 3000
     });
 
     try {

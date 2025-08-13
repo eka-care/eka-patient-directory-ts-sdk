@@ -80,10 +80,18 @@ export class TrinityProfilesSDK {
 
         // Initialize method groups
         this.patients = new PatientMethods(this.client);
-
-        console.log(config, "config in index")
         this.search = new SearchMethods(this.client, config);
         this.utils = new UtilsMethods(this.client);
+
+        // Set up IndexedDB update callback for patients
+        if (config.workspaceId) {
+            this.patients.setIndexedDBUpdateCallback(async (patient) => {
+                const indexedDB = this.search.getDataLoader()?.getIndexedDB();
+                if (indexedDB) {
+                    await indexedDB.updatePatient(patient);
+                }
+            });
+        }
     }
 
     /**
@@ -162,6 +170,16 @@ export class TrinityProfilesSDK {
         this.patients = new PatientMethods(this.client);
         this.search = new SearchMethods(this.client, newConfig);
         this.utils = new UtilsMethods(this.client);
+
+        // Re-establish IndexedDB update callback for patients
+        if (newConfig.workspaceId) {
+            this.patients.setIndexedDBUpdateCallback(async (patient) => {
+                const indexedDB = this.search.getDataLoader()?.getIndexedDB();
+                if (indexedDB) {
+                    await indexedDB.updatePatient(patient);
+                }
+            });
+        }
     }
 
     /**
