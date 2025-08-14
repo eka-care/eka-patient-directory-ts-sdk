@@ -1,5 +1,5 @@
 {
-    "name": "patient-ts-sdk",
+    "name": "@eka-care/patient-ts-sdk",
     "version": "1.0.0",
     "description": "TypeScript SDK for Trinity Patient Profile Management System",
     "main": "dist/index.js",
