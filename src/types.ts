@@ -253,7 +253,7 @@ export interface SdkConfig {
     /** Base URL for the API */
     baseUrl: string;
     /** Access token for authentication */
-    accessToken: string;
+    accessToken?: string;
     /** Workspace ID for local data storage */
     workspaceId: string;
     /** Request timeout in milliseconds */

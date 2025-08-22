@@ -3,13 +3,13 @@
  */
 
 import { HttpClient } from '../client';
-import { IndexedDBService } from '../services/indexeddb';
 import { DataLoaderService } from '../services/data-loader';
+import { IndexedDBService } from '../services/indexeddb';
 import {
+    LocalMinifiedPatient,
     Patient,
-    SearchParams,
     SdkConfig,
-    LocalMinifiedPatient
+    SearchParams
 } from '../types';
 
 /**
@@ -26,7 +26,7 @@ export class SearchMethods {
     constructor(client: HttpClient, config?: SdkConfig) {
         this.client = client;
         this.config = config || null;
-        
+
         // Initialize local search components if enabled
         if (config && config.workspaceId) {
             this.indexedDB = new IndexedDBService(config.workspaceId);
@@ -199,10 +199,7 @@ export class SearchMethods {
             oid: local.oid,
             wid: this.config?.workspaceId || '',
             ps: 'P' as const,
-            c_ate: 0,
             u_ate: local.u_ate,
-            gen: 'O' as const,
-            dob: '1900-01-01',
             fln: local.fln,
             mobile: local.mobile,
             username: local.username

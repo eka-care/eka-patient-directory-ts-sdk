@@ -47,7 +47,7 @@ export class HttpClient {
 
     constructor(config: SdkConfig) {
         this.baseUrl = config.baseUrl.replace(/\/$/, ''); // Remove trailing slash
-        this.accessToken = config.accessToken;
+        this.accessToken = config.accessToken || '';
         this.timeout = config.timeout || 30000; // 30 seconds default
         this.config = config;
     }
@@ -184,10 +184,13 @@ export class HttpClient {
      */
     private buildHeaders(customHeaders?: Record<string, string>): Record<string, string> {
         const headers: Record<string, string> = {
-            'Authorization': `Bearer ${this.accessToken}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         };
+
+        if (this.accessToken) {
+            headers['Authorization'] = `Bearer ${this.accessToken}`;
+        }
 
         if (customHeaders) {
             Object.assign(headers, customHeaders);

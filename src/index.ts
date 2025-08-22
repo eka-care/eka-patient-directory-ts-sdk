@@ -68,9 +68,7 @@ export class TrinityProfilesSDK {
         if (!config.baseUrl) {
             throw new Error('baseUrl is required');
         }
-        if (!config.accessToken) {
-            throw new Error('accessToken is required');
-        }
+
         if (!config.workspaceId) {
             throw new Error('workspaceId is required');
         }
@@ -221,7 +219,7 @@ export class TrinityProfilesSDK {
         await this.search.initializeLocalSearch();
 
 
-        
+
         // Start sync if enabled and Worker is supported
 
         if (this.isLocalSearchEnabled()) {
@@ -363,10 +361,10 @@ export class TrinityProfilesSDK {
         try {
             // Create worker from the built file
             this.syncWorker = new Worker('./dist/workers/sync-worker.js');
-            
+
             this.syncWorker.onmessage = (event) => {
                 const { type, payload } = event.data;
-                
+
                 switch (type) {
                     case 'progress':
                         if (callbacks?.onProgress && payload?.progress) {

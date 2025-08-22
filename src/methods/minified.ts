@@ -29,9 +29,9 @@ export class MinifiedMethods {
      * const profiles = await minifiedMethods.getMinified({ page: 1, limit: 50 });
      * ```
      */
-    async getMinified(params?: Record<string, string | number | boolean>): Promise<{data: MinifiedPatient[]}> {
+    async getMinified(params?: Record<string, string | number | boolean>): Promise<{ data: MinifiedPatient[] }> {
         const response = await this.client.get<{ data: MinifiedPatient[] }>(`${this.basePath}/minified`, params);
-        return response.data ;
+        return response.data;
     }
 
     /**
@@ -41,7 +41,7 @@ export class MinifiedMethods {
      * @param limit Number of records per page
      * @returns Array of minified patient profiles
      */
-    async getPage(page: number, limit: number = 100): Promise<{data: MinifiedPatient[]}> {
+    async getPage(page: number, limit: number = 100): Promise<{ data: MinifiedPatient[] }> {
         return this.getMinified({ page, limit });
     }
 }
