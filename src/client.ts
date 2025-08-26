@@ -76,6 +76,7 @@ export class HttpClient {
             method: options.method,
             headers,
             signal: this.createAbortSignal(),
+            credentials: 'include'
         };
 
         // Add body for POST/PATCH requests
