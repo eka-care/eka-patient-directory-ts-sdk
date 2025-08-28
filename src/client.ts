@@ -13,7 +13,7 @@ import { SdkConfig } from './types';
 /**
  * HTTP method types
  */
-export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS';
 
 /**
  * Request options
@@ -85,7 +85,9 @@ export class HttpClient {
         }
 
         try {
+            console.log("requestInit -> ", requestInit)
             const response = await fetch(url, requestInit);
+
 
             // Parse response
             let data: T;
