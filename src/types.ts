@@ -37,7 +37,7 @@ export enum Environment {
 }
 export const EnvironmentBaseUrl: Record<Environment, string> = {
     [Environment.PROD]: "https://api.eka.care",
-    [Environment.DEV]: "https://aortago.eka.care",
+    [Environment.DEV]: "https://aortago.dev.eka.care",
 }
 
 /**
