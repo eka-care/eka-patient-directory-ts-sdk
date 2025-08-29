@@ -29,7 +29,7 @@ import { HttpClient } from './client';
 import { PatientMethods } from './methods/patients';
 import { SearchMethods } from './methods/search';
 import { UtilsMethods } from './methods/utils';
-import { CreatePatientData, Patient, SdkConfig } from './types';
+import { CreatePatientData, EnvironmentBaseUrl, Patient, SdkConfig } from './types';
 
 /**
  * Main SDK class
@@ -65,8 +65,11 @@ export class TrinityProfilesSDK {
      */
     constructor(config: SdkConfig) {
         // Validate configuration
-        if (!config.baseUrl) {
-            throw new Error('baseUrl is required');
+        if (config.env === "dev") {
+            config.baseUrl = EnvironmentBaseUrl.dev
+        } else {
+            config.env = "prod"
+            config.baseUrl = EnvironmentBaseUrl.prod
         }
 
         if (!config.workspaceId) {
@@ -155,10 +158,8 @@ export class TrinityProfilesSDK {
         // Get current config to preserve settings
         const currentConfig = this.client.getConfig();
         const newConfig = {
-            baseUrl: currentConfig.baseUrl,
+            ...currentConfig,
             accessToken: newToken,
-            workspaceId: currentConfig.workspaceId || '',
-            timeout: currentConfig.timeout,
         };
 
         // Create new client with updated token
@@ -332,7 +333,7 @@ export class TrinityProfilesSDK {
     }
 
     /**
-     * Check if local search is enabled
+     * Check if local search is enabled, i.e if data present in indexedDB
      */
     private isLocalSearchEnabled(): boolean {
         const config = this.client.getConfig();

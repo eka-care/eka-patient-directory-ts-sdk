@@ -24,20 +24,6 @@ export class IndexedDBService {
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
                 this.db = request.result;
-
-
-                // Create object store for patients with workspace-specific naming
-                // const storeName = this.getStoreName();
-                // if (!this.db.objectStoreNames.contains(storeName)) {
-                //     const store = this.db.createObjectStore(storeName, { keyPath: 'oid' });
-
-                //     // Create indexes for search fields
-                //     store.createIndex('fln', 'fln', { unique: false });
-                //     store.createIndex('mobile', 'mobile', { unique: false });
-                //     store.createIndex('username', 'username', { unique: false });
-                //     store.createIndex('u_ate', 'u_ate', { unique: false });
-                // }
-
                 resolve();
             };
 
@@ -72,39 +58,25 @@ export class IndexedDBService {
     async batchStore(patients: LocalMinifiedPatient[]): Promise<void> {
         if (!this.db) throw new Error('Database not initialized');
 
-        
-
-        // return new Promise((resolve, reject) => {
-        //     const transaction = this.db!.transaction([this.getStoreName()], 'readwrite');
-        //     const store = transaction.objectStore(this.getStoreName());
-
-        //     transaction.oncomplete = () => resolve();
-        //     transaction.onerror = () => reject(transaction.error);
-
-        //     patients.forEach(patient => {
-        //         store.put(patient);
-        //     });
-        // });
-
         const storeName = this.getStoreName();
-    if (!this.db.objectStoreNames.contains(storeName)) {
-      
-        
-        // Close current connection and reinitialize
-        this.close();
-        await this.init();
-        
-        // Check again after reinitialization
-        if (!this.db?.objectStoreNames.contains(storeName)) {
-            throw new Error(`Object store '${storeName}' still not found after reinitialization`);
+        if (!this.db.objectStoreNames.contains(storeName)) {
+
+
+            // Close current connection and reinitialize
+            this.close();
+            await this.init();
+
+            // Check again after reinitialization
+            if (!this.db?.objectStoreNames.contains(storeName)) {
+                throw new Error(`Object store '${storeName}' still not found after reinitialization`);
+            }
         }
-    }
 
         return new Promise((resolve, reject) => {
             try {
                 const transaction = this.db!.transaction([this.getStoreName()], 'readwrite');
                 const store = transaction.objectStore(this.getStoreName());
-    
+
                 transaction.oncomplete = () => {
                     console.log('Batch store transaction completed successfully');
                     resolve();
@@ -113,7 +85,7 @@ export class IndexedDBService {
                     console.error('Batch store transaction error:', transaction.error);
                     reject(transaction.error);
                 };
-    
+
                 patients.forEach(patient => {
                     store.put(patient);
                 });

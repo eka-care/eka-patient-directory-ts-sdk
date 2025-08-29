@@ -113,7 +113,7 @@ export class PatientMethods {
                 const localPatient: LocalMinifiedPatient = {
                     oid: response.data.oid,
                     u_ate: 'u_ate' in response.data ? response.data.u_ate : Date.now(),
-                    fln: response.data.fln,
+                    fln: 'fln' in response.data ? response.data.fln : '',
                     mobile: response.data.mobile,
                     username: response.data.username
                 };

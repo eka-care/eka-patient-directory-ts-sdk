@@ -19,6 +19,20 @@ export type Persona = "P";
 export type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
 
 /**
+ * Extra minified patient fields
+ */
+export type ExtraMinifiedPatientFields = "dob" | "gen" | "abha" | "u_ate";
+
+/**
+ * Environment related base url
+ */
+export type Environment = "prod" | "dev";
+export const EnvironmentBaseUrl: Record<Environment, string> = {
+    prod: "https://api.eka.care",
+    dev: "https://aortago.eka.care",
+}
+
+/**
  * Patient profile creation data (matches CreateBusinessPatientSz V2)
  */
 export interface CreatePatientData {
@@ -153,19 +167,19 @@ export interface MinifiedPatient {
     /** Unique identifier */
     oid: string;
     /** Full name */
-    fln?: string;
+    fln: string;
     /** Mobile number */
     mobile?: string;
-    /** Email address */
-    email?: string;
+    /** Abha address */
+    abha?: string;
     /** Username */
     username?: string;
     /** Gender */
-    gen: Gender;
+    gen?: Gender;
     /** Date of birth */
-    dob: string;
-    /** Is profile archived */
-    arc?: boolean;
+    dob?: string;
+    /** Flag to indicate if dob was calculated from age */
+    is_age?: boolean;
 }
 
 /**
@@ -236,22 +250,31 @@ export interface PaginatedResponse<T> {
 export interface LocalMinifiedPatient {
     /** Unique identifier */
     oid: string;
-    /** Update timestamp (epoch) */
-    u_ate: number;
     /** Full name */
-    fln?: string;
+    fln: string;
     /** Mobile number */
     mobile?: string;
     /** Username */
     username?: string;
+    /** abha address */
+    abha?: string;
+    /** Gender */
+    gen?: Gender;
+    /** Date of birth */
+    dob?: string;
+    /** Update timestamp (epoch) */
+    u_ate?: number;
+    /** Flag to indicate if dob was calculated from age */
+    is_age?: boolean;
 }
+
 
 /**
  * SDK Configuration options
  */
 export interface SdkConfig {
     /** Base URL for the API */
-    baseUrl: string;
+    env?: "prod" | "dev";
     /** Access token for authentication */
     accessToken?: string;
     /** Workspace ID for local data storage */
@@ -259,4 +282,7 @@ export interface SdkConfig {
     /** Request timeout in milliseconds */
     timeout?: number;
     /** Enable local search functionality */
+    baseUrl?: string;
+    /** Extra minified patient fields */
+    extraMinifiedPatientFields?: ExtraMinifiedPatientFields[];
 }
