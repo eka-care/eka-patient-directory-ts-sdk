@@ -5,7 +5,7 @@
  * that caches patient data locally for faster searching.
  */
 
-const { TrinityProfilesSDK } = require('./src/index.ts');
+const { TrinityProfilesSDK } = require('./dist/index.js');
 
 async function exampleLocalSearch() {
     // Initialize SDK with local search enabled

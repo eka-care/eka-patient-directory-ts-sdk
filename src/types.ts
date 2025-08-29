@@ -21,15 +21,23 @@ export type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-"
 /**
  * Extra minified patient fields
  */
-export type ExtraMinifiedPatientFields = "dob" | "gen" | "abha" | "u_ate";
+export type ExtraMinifiedPatientFields = "dob" | "gen" | "abha" | "u_ate" | "is_age";
+
+/**
+ * Extra patient fields
+ */
+export type DefaultMinifiedPatientFields = ["oid", "fln", "mobile", "username"];
 
 /**
  * Environment related base url
  */
-export type Environment = "prod" | "dev";
+export enum Environment {
+    PROD = "PROD",
+    DEV = "DEV",
+}
 export const EnvironmentBaseUrl: Record<Environment, string> = {
-    prod: "https://api.eka.care",
-    dev: "https://aortago.eka.care",
+    [Environment.PROD]: "https://api.eka.care",
+    [Environment.DEV]: "https://aortago.eka.care",
 }
 
 /**
@@ -110,14 +118,10 @@ export interface UpdatePatientData {
 export interface Patient {
     /** Unique identifier */
     oid: string;
-    /** Workspace ID */
-    wid: string;
-    /** Persona */
-    ps: Persona;
     /** Creation timestamp (epoch) */
-    c_ate: number;
+    c_ate?: number;
     /** Update timestamp (epoch) */
-    u_ate: number;
+    u_ate?: number;
     /** Audience of the creator */
     c_aud?: string;
 
@@ -132,7 +136,7 @@ export interface Patient {
     /** Last name */
     ln?: string;
     /** Full name */
-    fln?: string;
+    fln: string;
 
     /** Country code */
     ccd?: string;
@@ -156,8 +160,6 @@ export interface Patient {
 
     /** Additional arbitrary data */
     extras?: Record<string, any>;
-    /** Old OID */
-    old_oid?: string;
 }
 
 /**
@@ -274,7 +276,7 @@ export interface LocalMinifiedPatient {
  */
 export interface SdkConfig {
     /** Base URL for the API */
-    env?: "prod" | "dev";
+    env?: Environment;
     /** Access token for authentication */
     accessToken?: string;
     /** Workspace ID for local data storage */

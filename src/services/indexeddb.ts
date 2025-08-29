@@ -178,6 +178,43 @@ export class IndexedDBService {
     }
 
     /**
+     * Partially update patient by OID - only updates specified fields
+     */
+    async partialUpdatePatient(oid: string, updates: Partial<LocalMinifiedPatient>): Promise<void> {
+        if (!this.db) throw new Error('Database not initialized');
+
+        return new Promise((resolve, reject) => {
+            const transaction = this.db!.transaction([this.getStoreName()], 'readwrite');
+            const store = transaction.objectStore(this.getStoreName());
+            
+            // First get the existing patient record
+            const getRequest = store.get(oid);
+            
+            getRequest.onsuccess = () => {
+                const existingPatient = getRequest.result;
+                if (!existingPatient) {
+                    reject(new Error(`Patient with OID ${oid} not found`));
+                    return;
+                }
+
+                // Merge existing data with updates
+                const updatedPatient: LocalMinifiedPatient = {
+                    ...existingPatient,
+                    ...updates,
+                    oid // Ensure OID is preserved
+                };
+
+                // Update the record
+                const putRequest = store.put(updatedPatient);
+                putRequest.onsuccess = () => resolve();
+                putRequest.onerror = () => reject(putRequest.error);
+            };
+            
+            getRequest.onerror = () => reject(getRequest.error);
+        });
+    }
+
+    /**
      * Check if any data exists
      */
     async hasData(): Promise<boolean> {

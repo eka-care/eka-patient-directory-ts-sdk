@@ -8,7 +8,7 @@ import {
     TrinitySDKError,
     createErrorFromResponse
 } from './errors';
-import { EnvironmentBaseUrl, SdkConfig } from './types';
+import { Environment, EnvironmentBaseUrl, SdkConfig } from './types';
 
 /**
  * HTTP method types
@@ -46,7 +46,7 @@ export class HttpClient {
     private readonly config: SdkConfig;
 
     constructor(config: SdkConfig) {
-        this.baseUrl = (config.baseUrl || EnvironmentBaseUrl[config.env]).replace(/\/$/, ''); // Remove trailing slash
+        this.baseUrl = (config.baseUrl || EnvironmentBaseUrl[config.env || Environment.PROD]).replace(/\/$/, ''); // Remove trailing slash
         this.accessToken = config.accessToken || '';
         this.timeout = config.timeout || 30000; // 30 seconds default
         this.config = config;

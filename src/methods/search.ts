@@ -199,10 +199,13 @@ export class SearchMethods {
             oid: local.oid,
             wid: this.config?.workspaceId || '',
             ps: 'P' as const,
-            u_ate: local.u_ate,
             fln: local.fln,
             mobile: local.mobile,
-            username: local.username
+            username: local.username,
+            gen: local.gen,
+            dob: local.dob,
+            is_age: local.is_age,
+            u_ate: local.u_ate,
         } as Patient));
     }
 

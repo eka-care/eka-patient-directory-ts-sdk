@@ -29,7 +29,7 @@ import { HttpClient } from './client';
 import { PatientMethods } from './methods/patients';
 import { SearchMethods } from './methods/search';
 import { UtilsMethods } from './methods/utils';
-import { CreatePatientData, EnvironmentBaseUrl, Patient, SdkConfig } from './types';
+import { CreatePatientData, Environment, EnvironmentBaseUrl, Patient, SdkConfig } from './types';
 
 /**
  * Main SDK class
@@ -65,11 +65,11 @@ export class TrinityProfilesSDK {
      */
     constructor(config: SdkConfig) {
         // Validate configuration
-        if (config.env === "dev") {
-            config.baseUrl = EnvironmentBaseUrl.dev
+        if (config.env === Environment.DEV) {
+            config.baseUrl = EnvironmentBaseUrl[Environment.DEV]
         } else {
-            config.env = "prod"
-            config.baseUrl = EnvironmentBaseUrl.prod
+            config.env = Environment.PROD
+            config.baseUrl = EnvironmentBaseUrl[Environment.PROD]
         }
 
         if (!config.workspaceId) {
@@ -90,6 +90,12 @@ export class TrinityProfilesSDK {
                 const indexedDB = this.search.getDataLoader()?.getIndexedDB();
                 if (indexedDB) {
                     await indexedDB.updatePatient(patient);
+                }
+            });
+            this.patients.setIndexedDBPartialUpdateCallback(async (oid, updates) => {
+                const indexedDB = this.search.getDataLoader()?.getIndexedDB();
+                if (indexedDB) {
+                    await indexedDB.partialUpdatePatient(oid, updates);
                 }
             });
         }
@@ -178,7 +184,15 @@ export class TrinityProfilesSDK {
                     await indexedDB.updatePatient(patient);
                 }
             });
+
+            this.patients.setIndexedDBPartialUpdateCallback(async (oid, updates) => {
+                const indexedDB = this.search.getDataLoader()?.getIndexedDB();
+                if (indexedDB) {
+                    await indexedDB.partialUpdatePatient(oid, updates);
+                }
+            });
         }
+
     }
 
     /**
@@ -237,7 +251,6 @@ export class TrinityProfilesSDK {
         // }
 
     }
-
 
     // TO SEARCH
     async searchPatientByPrefix(prefix: string, limit: number = 50, select?: string): Promise<Patient[]> {
