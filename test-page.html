@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinity Profiles SDK Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h1,
+        h2 {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .search-results {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .patient-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .patient-card:hover {
+            background: #e9ecef;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Trinity Profiles SDK Test Page</h1>
+
+    <!-- SDK Status -->
+    <div class="container">
+        <h2>SDK Status</h2>
+        <div id="sdk-status">Initializing...</div>
+    </div>
+
+    <!-- Create Patient -->
+    <div class="container">
+        <h2>Create Patient</h2>
+        <form id="create-patient-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="mobile">Mobile:</label>
+                    <input type="tel" id="mobile" name="mobile">
+                </div>
+                <div class="form-group">
+                    <label for="ccd">Country Code:</label>
+                    <input type="text" id="ccd" name="ccd" value="+1" placeholder="+1">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="bloodGroup">Blood Group:</label>
+                    <select id="bloodGroup" name="bloodGroup">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" rows="3"></textarea>
+            </div>
+
+            <button type="submit">Create Patient</button>
+        </form>
+        <div id="create-result"></div>
+    </div>
+
+    <!-- Search Patients -->
+    <div class="container">
+        <h2>Search Patients</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="searchMobile">Search by Mobile:</label>
+                <input type="tel" id="searchMobile" placeholder="Enter mobile number">
+                <button type="button" onclick="searchByMobile()">Search Mobile</button>
+            </div>
+            <div class="form-group">
+                <label for="searchFLN">Search by FLN:</label>
+                <input type="text" id="searchFLN" placeholder="Enter FLN">
+                <button type="button" onclick="searchByFLN()">Search FLN</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="searchUsername">Search by Username:</label>
+            <input type="text" id="searchUsername" placeholder="Enter username">
+            <button type="button" onclick="searchByUsername()">Search Username</button>
+        </div>
+
+        <div id="search-result"></div>
+        <div id="search-results" class="search-results" style="display: none;"></div>
+    </div>
+
+    <!-- Update Patient -->
+    <div class="container">
+        <h2>Update Patient</h2>
+        <div class="form-group">
+            <label for="updatePatientId">Patient ID:</label>
+            <input type="text" id="updatePatientId" placeholder="Enter patient ID to update">
+            <button type="button" onclick="loadPatientForUpdate()">Load Patient</button>
+        </div>
+
+        <form id="update-patient-form" style="display: none;">
+            <input type="hidden" id="updateId" name="id">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="updateFirstName">First Name:</label>
+                    <input type="text" id="updateFirstName" name="firstName">
+                </div>
+                <div class="form-group">
+                    <label for="updateLastName">Last Name:</label>
+                    <input type="text" id="updateLastName" name="lastName">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="updateDob">Date of Birth:</label>
+                    <input type="date" id="updateDob" name="dob">
+                </div>
+                <div class="form-group">
+                    <label for="updateGender">Gender:</label>
+                    <select id="updateGender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="updateMobile">Mobile:</label>
+                    <input type="tel" id="updateMobile" name="mobile">
+                </div>
+                <div class="form-group">
+                    <label for="updateCcd">Country Code:</label>
+                    <input type="text" id="updateCcd" name="ccd">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="updateEmail">Email:</label>
+                    <input type="email" id="updateEmail" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="updateBloodGroup">Blood Group:</label>
+                    <select id="updateBloodGroup" name="bloodGroup">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="updateAddress">Address:</label>
+                <textarea id="updateAddress" name="address" rows="3"></textarea>
+            </div>
+
+            <button type="submit">Update Patient</button>
+        </form>
+        <div id="update-result"></div>
+    </div>
+
+    <script type="module">
+        import {  } from './dist/index.mjs';
+
+        let sdk;
+
+        // Initialize SDK on page load
+        window.addEventListener('DOMContentLoaded', async function () {
+            try {
+                // You'll need to replace these with your actual configuration
+                const config = {
+                    env: "dev",
+                    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkb2Mtd2ViIiwiYi1pZCI6IjczOTU0MDU5ODc1MTM5IiwiY2MiOnt9LCJkb2IiOiIxOTkyLTA2LTAyIiwiZXhwIjoxNzU2NTM3MDc1LCJmbiI6Ik5laGEiLCJnZW4iOiJGIiwiaWF0IjoxNzU2NTM2Nzc1LCJpZHAiOiJtb2IiLCJpc3MiOiJlbXIuZWthLmNhcmUiLCJqdGkiOiJmYTNhMjEwYy1kMzA3LTRlMmEtODFlYi1hMjg5NzNhYTlkMDciLCJsbiI6IkoiLCJvaWQiOiIxNzM5ODA0NDg1NTY3OTMiLCJwcmkiOnRydWUsInBzIjoiRCIsInIiOiJVUyIsInMiOiJEciIsInV1aWQiOiJjNzkwNTJkNy1lZjM5LTRkNjctYWM0MC02NDRmMTdiNDUwYjQiLCJ3aWQiOiI3Mzk1NDA1OTg3NTEzOSJ9.hDXMRapMfPeoigOfWJmsfwDcoleQyjQlJ0VwBkGA-4E",
+                    workspaceId: "73954059875139",
+                    extraMinifiedPatientFields: ["gen", "u_ate"],
+                };
+
+                sdk = new TrinityProfilesSDK(config);
+                document.getElementById('sdk-status').innerHTML = '<span class="success">SDK initialized successfully!</span>';
+            } catch (error) {
+                console.error('SDK initialization error:', error);
+                document.getElementById('sdk-status').innerHTML = '<span class="error">SDK initialization failed: ' + error.message + '</span>';
+            }
+        });
+
+        // Create Patient Form Handler
+        document.getElementById('create-patient-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const resultDiv = document.getElementById('create-result');
+            resultDiv.innerHTML = 'Creating patient...';
+
+            try {
+                const formData = new FormData(e.target);
+                const patientData = {
+                    fn: formData.get('firstName'),
+                    ln: formData.get('lastName'),
+                    dob: formData.get('dob'),
+                    gender: formData.get('gender'),
+                    mobile: formData.get('mobile'),
+                    ccd: formData.get('ccd'),
+                    email: formData.get('email'),
+                    bg: formData.get('bloodGroup'),
+                    address: formData.get('address')
+                };
+
+                const result = await sdk.patients.create(patientData);
+                resultDiv.innerHTML = '<div class="result success">Patient created successfully!<br>ID: ' + result.id + '<br>FLN: ' + result.fln + '</div>';
+                e.target.reset();
+            } catch (error) {
+                console.error('Create patient error:', error);
+                resultDiv.innerHTML = '<div class="result error">Error creating patient: ' + error.message + '</div>';
+            }
+        });
+
+        // Make functions available globally for onclick handlers
+        window.searchByMobile = async function () {
+            const mobile = document.getElementById('searchMobile').value;
+            const resultDiv = document.getElementById('search-result');
+            const resultsDiv = document.getElementById('search-results');
+
+            if (!mobile) {
+                resultDiv.innerHTML = '<div class="result error">Please enter a mobile number</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Searching...';
+            resultsDiv.style.display = 'none';
+
+            try {
+                const results = await sdk.search.byMobile(mobile);
+                window.displaySearchResults(results);
+            } catch (error) {
+                console.error('Search by mobile error:', error);
+                resultDiv.innerHTML = '<div class="result error">Error searching: ' + error.message + '</div>';
+            }
+        }
+
+        window.searchByFLN = async function () {
+            const fln = document.getElementById('searchFLN').value;
+            const resultDiv = document.getElementById('search-result');
+            const resultsDiv = document.getElementById('search-results');
+
+            if (!fln) {
+                resultDiv.innerHTML = '<div class="result error">Please enter a FLN</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Searching...';
+            resultsDiv.style.display = 'none';
+
+            try {
+                const results = await sdk.search.byFLN(fln);
+                window.displaySearchResults(results);
+            } catch (error) {
+                console.error('Search by FLN error:', error);
+                resultDiv.innerHTML = '<div class="result error">Error searching: ' + error.message + '</div>';
+            }
+        }
+
+        window.searchByUsername = async function () {
+            const username = document.getElementById('searchUsername').value;
+            const resultDiv = document.getElementById('search-result');
+            const resultsDiv = document.getElementById('search-results');
+
+            if (!username) {
+                resultDiv.innerHTML = '<div class="result error">Please enter a username</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Searching...';
+            resultsDiv.style.display = 'none';
+
+            try {
+                const results = await sdk.search.byUsername(username);
+                window.displaySearchResults(results);
+            } catch (error) {
+                console.error('Search by username error:', error);
+                resultDiv.innerHTML = '<div class="result error">Error searching: ' + error.message + '</div>';
+            }
+        }
+
+        window.displaySearchResults = function (results) {
+            const resultDiv = document.getElementById('search-result');
+            const resultsDiv = document.getElementById('search-results');
+
+            if (!results || results.length === 0) {
+                resultDiv.innerHTML = '<div class="result">No patients found</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="result success">Found ' + results.length + ' patient(s)</div>';
+
+            let html = '';
+            results.forEach(patient => {
+                html += `
+                    <div class="patient-card" onclick="selectPatientForUpdate('${patient.id}')">
+                        <strong>${patient.fn} ${patient.ln}</strong><br>
+                        ID: ${patient.id}<br>
+                        FLN: ${patient.fln || 'N/A'}<br>
+                        Mobile: ${patient.mobile || 'N/A'}<br>
+                        Email: ${patient.email || 'N/A'}<br>
+                        DOB: ${patient.dob || 'N/A'}<br>
+                        <small>Click to load for update</small>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+
+        window.selectPatientForUpdate = function (patientId) {
+            document.getElementById('updatePatientId').value = patientId;
+            window.loadPatientForUpdate();
+        }
+
+        // Load Patient for Update
+        window.loadPatientForUpdate = async function () {
+            const patientId = document.getElementById('updatePatientId').value;
+            const resultDiv = document.getElementById('update-result');
+            const form = document.getElementById('update-patient-form');
+
+            if (!patientId) {
+                resultDiv.innerHTML = '<div class="result error">Please enter a patient ID</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Loading patient...';
+
+            try {
+                const patient = await sdk.patients.getById(patientId);
+
+                // Populate update form
+                document.getElementById('updateId').value = patient.id;
+                document.getElementById('updateFirstName').value = patient.fn || '';
+                document.getElementById('updateLastName').value = patient.ln || '';
+                document.getElementById('updateDob').value = patient.dob || '';
+                document.getElementById('updateGender').value = patient.gender || '';
+                document.getElementById('updateMobile').value = patient.mobile || '';
+                document.getElementById('updateCcd').value = patient.ccd || '';
+                document.getElementById('updateEmail').value = patient.email || '';
+                document.getElementById('updateBloodGroup').value = patient.bg || '';
+                document.getElementById('updateAddress').value = patient.address || '';
+
+                form.style.display = 'block';
+                resultDiv.innerHTML = '<div class="result success">Patient loaded successfully!</div>';
+            } catch (error) {
+                console.error('Load patient error:', error);
+                resultDiv.innerHTML = '<div class="result error">Error loading patient: ' + error.message + '</div>';
+                form.style.display = 'none';
+            }
+        }
+
+        // Update Patient Form Handler
+        document.getElementById('update-patient-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const resultDiv = document.getElementById('update-result');
+            resultDiv.innerHTML = 'Updating patient...';
+
+            try {
+                const formData = new FormData(e.target);
+                const patientData = {
+                    id: formData.get('id'),
+                    fn: formData.get('firstName'),
+                    ln: formData.get('lastName'),
+                    dob: formData.get('dob'),
+                    gender: formData.get('gender'),
+                    mobile: formData.get('mobile'),
+                    ccd: formData.get('ccd'),
+                    email: formData.get('email'),
+                    bg: formData.get('bloodGroup'),
+                    address: formData.get('address')
+                };
+
+                const result = await sdk.patients.update(patientData.id, patientData);
+                resultDiv.innerHTML = '<div class="result success">Patient updated successfully!</div>';
+            } catch (error) {
+                console.error('Update patient error:', error);
+                resultDiv.innerHTML = '<div class="result error">Error updating patient: ' + error.message + '</div>';
+            }
+        });
+    </script>
+</body>
+
+</html>

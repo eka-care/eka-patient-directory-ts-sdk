@@ -5,9 +5,9 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "dev": "tsc --watch",
+        "dev": "vite build --watch",
         "type-check": "tsc --noEmit",
-        "build": "tsc",
+        "build": "vite build",
         "test": "node test-sdk.js"
     },
     "keywords": [
@@ -24,8 +24,9 @@
         "access": "public"
     },
     "devDependencies": {
+        "@types/node": "^20.0.0",
         "typescript": "^5.0.0",
-        "@types/node": "^20.0.0"
+        "vite": "^7.1.3"
     },
     "dependencies": {}
 }
