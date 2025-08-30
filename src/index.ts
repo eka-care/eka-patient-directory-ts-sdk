@@ -120,7 +120,10 @@ export class TrinityProfilesSDK {
      * });
      * ```
      */
-    public static getInstance(config?: SdkConfig): TrinityProfilesSDK {
+    public static getInstance(config?: SdkConfig, force: boolean = false): TrinityProfilesSDK {
+        if (force) {
+            TrinityProfilesSDK.instance = null;
+        }
         if (!TrinityProfilesSDK.instance) {
             if (!config) {
                 throw new Error('Configuration is required for first initialization. Please provide SdkConfig.');
@@ -459,4 +462,4 @@ export * from './errors';
 export * from './types';
 
 // Default export
-export const getTrinitySDKInstance = (config: SdkConfig) => TrinityProfilesSDK.getInstance(config);
+export const getTrinitySDKInstance = (config: SdkConfig, force: boolean = false) => TrinityProfilesSDK.getInstance(config, force);

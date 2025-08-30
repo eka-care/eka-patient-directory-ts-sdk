@@ -305,7 +305,7 @@
     </div>
 
     <script type="module">
-        import {  } from './dist/index.mjs';
+        import { getTrinitySDKInstance } from './dist/index.mjs';
 
         let sdk;
 
@@ -314,14 +314,18 @@
             try {
                 // You'll need to replace these with your actual configuration
                 const config = {
-                    env: "dev",
-                    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkb2Mtd2ViIiwiYi1pZCI6IjczOTU0MDU5ODc1MTM5IiwiY2MiOnt9LCJkb2IiOiIxOTkyLTA2LTAyIiwiZXhwIjoxNzU2NTM3MDc1LCJmbiI6Ik5laGEiLCJnZW4iOiJGIiwiaWF0IjoxNzU2NTM2Nzc1LCJpZHAiOiJtb2IiLCJpc3MiOiJlbXIuZWthLmNhcmUiLCJqdGkiOiJmYTNhMjEwYy1kMzA3LTRlMmEtODFlYi1hMjg5NzNhYTlkMDciLCJsbiI6IkoiLCJvaWQiOiIxNzM5ODA0NDg1NTY3OTMiLCJwcmkiOnRydWUsInBzIjoiRCIsInIiOiJVUyIsInMiOiJEciIsInV1aWQiOiJjNzkwNTJkNy1lZjM5LTRkNjctYWM0MC02NDRmMTdiNDUwYjQiLCJ3aWQiOiI3Mzk1NDA1OTg3NTEzOSJ9.hDXMRapMfPeoigOfWJmsfwDcoleQyjQlJ0VwBkGA-4E",
+                    env: "DEV",
                     workspaceId: "73954059875139",
-                    extraMinifiedPatientFields: ["gen", "u_ate"],
+                    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkb2Mtd2ViIiwiYi1pZCI6IjczOTU0MDU5ODc1MTM5IiwiY2MiOnt9LCJkb2IiOiIxOTkyLTA2LTAyIiwiZXhwIjoxNzU2NTY5ODkzLCJmbiI6Ik5laGEiLCJnZW4iOiJGIiwiaWF0IjoxNzU2NTY5NTkzLCJpZHAiOiJtb2IiLCJpc3MiOiJlbXIuZWthLmNhcmUiLCJqdGkiOiJhZTk0MzI5NS0yZGE2LTQyNDAtYjU3NS0xYTI2OTRiYzhkYzkiLCJsbiI6IkoiLCJvaWQiOiIxNzM5ODA0NDg1NTY3OTMiLCJwcmkiOnRydWUsInBzIjoiRCIsInIiOiJVUyIsInMiOiJEciIsInV1aWQiOiJjNzkwNTJkNy1lZjM5LTRkNjctYWM0MC02NDRmMTdiNDUwYjQiLCJ3aWQiOiI3Mzk1NDA1OTg3NTEzOSJ9.Fi1N993qU_munDsQ3G6_-sWa8ecIHeb-UAggrUQ3K9Y",
+                    extraMinifiedPatientFields: ["gen", "dob", "is_age"],
                 };
 
-                sdk = new TrinityProfilesSDK(config);
+                sdk = getTrinitySDKInstance(config);
                 document.getElementById('sdk-status').innerHTML = '<span class="success">SDK initialized successfully!</span>';
+
+                // Initialize local search functionality
+                await sdk.initializeLocalSearch();
+                document.getElementById('sdk-status').innerHTML = '<span class="success">SDK initialized successfully! Local search initialized.</span>';
             } catch (error) {
                 console.error('SDK initialization error:', error);
                 document.getElementById('sdk-status').innerHTML = '<span class="error">SDK initialization failed: ' + error.message + '</span>';
