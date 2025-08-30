@@ -29,7 +29,7 @@ import { HttpClient } from './client';
 import { PatientMethods } from './methods/patients';
 import { SearchMethods } from './methods/search';
 import { UtilsMethods } from './methods/utils';
-import { CreatePatientData, Patient, SdkConfig } from './types';
+import { CreatePatientData, Environment, EnvironmentBaseUrl, Patient, SdkConfig } from './types';
 
 /**
  * Main SDK class
@@ -65,8 +65,11 @@ export class TrinityProfilesSDK {
      */
     constructor(config: SdkConfig) {
         // Validate configuration
-        if (!config.baseUrl) {
-            throw new Error('baseUrl is required');
+        if (config.env === Environment.DEV) {
+            config.baseUrl = EnvironmentBaseUrl[Environment.DEV]
+        } else {
+            config.env = Environment.PROD
+            config.baseUrl = EnvironmentBaseUrl[Environment.PROD]
         }
 
         if (!config.workspaceId) {
@@ -87,6 +90,12 @@ export class TrinityProfilesSDK {
                 const indexedDB = this.search.getDataLoader()?.getIndexedDB();
                 if (indexedDB) {
                     await indexedDB.updatePatient(patient);
+                }
+            });
+            this.patients.setIndexedDBPartialUpdateCallback(async (oid, updates) => {
+                const indexedDB = this.search.getDataLoader()?.getIndexedDB();
+                if (indexedDB) {
+                    await indexedDB.partialUpdatePatient(oid, updates);
                 }
             });
         }
@@ -111,7 +120,10 @@ export class TrinityProfilesSDK {
      * });
      * ```
      */
-    public static getInstance(config?: SdkConfig): TrinityProfilesSDK {
+    public static getInstance(config?: SdkConfig, force: boolean = false): TrinityProfilesSDK {
+        if (force) {
+            TrinityProfilesSDK.instance = null;
+        }
         if (!TrinityProfilesSDK.instance) {
             if (!config) {
                 throw new Error('Configuration is required for first initialization. Please provide SdkConfig.');
@@ -155,10 +167,8 @@ export class TrinityProfilesSDK {
         // Get current config to preserve settings
         const currentConfig = this.client.getConfig();
         const newConfig = {
-            baseUrl: currentConfig.baseUrl,
+            ...currentConfig,
             accessToken: newToken,
-            workspaceId: currentConfig.workspaceId || '',
-            timeout: currentConfig.timeout,
         };
 
         // Create new client with updated token
@@ -177,7 +187,15 @@ export class TrinityProfilesSDK {
                     await indexedDB.updatePatient(patient);
                 }
             });
+
+            this.patients.setIndexedDBPartialUpdateCallback(async (oid, updates) => {
+                const indexedDB = this.search.getDataLoader()?.getIndexedDB();
+                if (indexedDB) {
+                    await indexedDB.partialUpdatePatient(oid, updates);
+                }
+            });
         }
+
     }
 
     /**
@@ -236,7 +254,6 @@ export class TrinityProfilesSDK {
         // }
 
     }
-
 
     // TO SEARCH
     async searchPatientByPrefix(prefix: string, limit: number = 50, select?: string): Promise<Patient[]> {
@@ -332,7 +349,7 @@ export class TrinityProfilesSDK {
     }
 
     /**
-     * Check if local search is enabled
+     * Check if local search is enabled, i.e if data present in indexedDB
      */
     private isLocalSearchEnabled(): boolean {
         const config = this.client.getConfig();
@@ -445,4 +462,4 @@ export * from './errors';
 export * from './types';
 
 // Default export
-export const getTrinitySDKInstance = (config: SdkConfig) => TrinityProfilesSDK.getInstance(config);
+export const getTrinitySDKInstance = (config: SdkConfig, force: boolean = false) => TrinityProfilesSDK.getInstance(config, force);
