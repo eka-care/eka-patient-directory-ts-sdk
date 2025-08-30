@@ -305,7 +305,7 @@
     </div>
 
     <script type="module">
-        import { getTrinitySDKInstance } from './dist/index.mjs';
+        import { getTrinitySDKInstance } from './dist/index.mjs?v=2';
 
         let sdk;
 
@@ -316,11 +316,11 @@
                 const config = {
                     env: "DEV",
                     workspaceId: "73954059875139",
-                    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkb2Mtd2ViIiwiYi1pZCI6IjczOTU0MDU5ODc1MTM5IiwiY2MiOnt9LCJkb2IiOiIxOTkyLTA2LTAyIiwiZXhwIjoxNzU2NTY5ODkzLCJmbiI6Ik5laGEiLCJnZW4iOiJGIiwiaWF0IjoxNzU2NTY5NTkzLCJpZHAiOiJtb2IiLCJpc3MiOiJlbXIuZWthLmNhcmUiLCJqdGkiOiJhZTk0MzI5NS0yZGE2LTQyNDAtYjU3NS0xYTI2OTRiYzhkYzkiLCJsbiI6IkoiLCJvaWQiOiIxNzM5ODA0NDg1NTY3OTMiLCJwcmkiOnRydWUsInBzIjoiRCIsInIiOiJVUyIsInMiOiJEciIsInV1aWQiOiJjNzkwNTJkNy1lZjM5LTRkNjctYWM0MC02NDRmMTdiNDUwYjQiLCJ3aWQiOiI3Mzk1NDA1OTg3NTEzOSJ9.Fi1N993qU_munDsQ3G6_-sWa8ecIHeb-UAggrUQ3K9Y",
+                    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkb2Mtd2ViIiwiYi1pZCI6IjczOTU0MDU5ODc1MTM5IiwiY2MiOnt9LCJkb2IiOiIxOTkyLTA2LTAyIiwiZXhwIjoxNzU2NTcyMzY2LCJmbiI6Ik5laGEiLCJnZW4iOiJGIiwiaWF0IjoxNzU2NTcyMDY2LCJpZHAiOiJtb2IiLCJpc3MiOiJlbXIuZWthLmNhcmUiLCJqdGkiOiI5M2JkNTMyMS1iNzcyLTQzNjQtYmFkNy1jZDAyNDMwNjMwY2UiLCJsbiI6IkoiLCJvaWQiOiIxNzM5ODA0NDg1NTY3OTMiLCJwcmkiOnRydWUsInBzIjoiRCIsInIiOiJVUyIsInMiOiJEciIsInV1aWQiOiJjNzkwNTJkNy1lZjM5LTRkNjctYWM0MC02NDRmMTdiNDUwYjQiLCJ3aWQiOiI3Mzk1NDA1OTg3NTEzOSJ9.iMKjrjE5uTthEfsz2RX37p-7cvKw7KfMTJKetsHO81Q",
                     extraMinifiedPatientFields: ["gen", "dob", "is_age"],
                 };
 
-                sdk = getTrinitySDKInstance(config);
+                sdk = getTrinitySDKInstance(config, true);
                 document.getElementById('sdk-status').innerHTML = '<span class="success">SDK initialized successfully!</span>';
 
                 // Initialize local search functionality
@@ -350,7 +350,6 @@
                     ccd: formData.get('ccd'),
                     email: formData.get('email'),
                     bg: formData.get('bloodGroup'),
-                    address: formData.get('address')
                 };
 
                 const result = await sdk.patients.create(patientData);
@@ -377,7 +376,7 @@
             resultsDiv.style.display = 'none';
 
             try {
-                const results = await sdk.search.byMobile(mobile);
+                const results = await sdk.search.searchByPrefix(mobile);
                 window.displaySearchResults(results);
             } catch (error) {
                 console.error('Search by mobile error:', error);
@@ -399,7 +398,7 @@
             resultsDiv.style.display = 'none';
 
             try {
-                const results = await sdk.search.byFLN(fln);
+                const results = await sdk.search.searchByPrefix(fln);
                 window.displaySearchResults(results);
             } catch (error) {
                 console.error('Search by FLN error:', error);
@@ -421,7 +420,7 @@
             resultsDiv.style.display = 'none';
 
             try {
-                const results = await sdk.search.byUsername(username);
+                const results = await sdk.search.searchByPrefix(username);
                 window.displaySearchResults(results);
             } catch (error) {
                 console.error('Search by username error:', error);

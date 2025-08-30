@@ -30,7 +30,16 @@ export class MinifiedMethods {
      * ```
      */
     async getMinified(params?: Record<string, string | number | boolean>): Promise<{ data: MinifiedPatient[] }> {
-        const response = await this.client.get<{ data: MinifiedPatient[] }>(`${this.basePath}/minified`, params);
+        const config = this.client.getConfig();
+        let queryParams = { ...params };
+
+        if (config.extraMinifiedPatientFields) {
+            queryParams.select = config.extraMinifiedPatientFields.join(",");
+            // replace 'is_age,' or 'is_age' with ''
+            queryParams.select = queryParams.select.replace(",is_age", "");
+        }
+
+        const response = await this.client.get<{ data: MinifiedPatient[] }>(`${this.basePath}/minified`, queryParams);
         return response.data;
     }
 

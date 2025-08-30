@@ -182,6 +182,8 @@ export interface MinifiedPatient {
     dob?: string;
     /** Flag to indicate if dob was calculated from age */
     is_age?: boolean;
+    /** Update timestamp (epoch) */
+    u_ate?: number;
 }
 
 /**

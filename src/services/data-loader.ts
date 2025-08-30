@@ -141,10 +141,14 @@ export class DataLoaderService {
             // Convert to local format
             const localPatients: LocalMinifiedPatient[] = patients.map(p => ({
                 oid: p.oid,
-                u_ate: Date.now(),
+                u_ate: p.u_ate,
                 fln: p.fln,
                 mobile: p.mobile,
-                username: p.username
+                username: p.username,
+                gen: p.gen,
+                dob: p.dob,
+                is_age: p.is_age,
+                abha: p.abha,
             }));
 
 
