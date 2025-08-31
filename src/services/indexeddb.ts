@@ -19,7 +19,8 @@ export class IndexedDBService {
    */
   async init(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, this.version);
+      console.log('init in indexeddb 22 -> ', this.dbName, this.version, this.getStoreName());
+      const request = indexedDB.open(this.dbName, this.version + 1);
       console.log('request in indexeddb -> ', request);
 
       request.onerror = () => reject(request.error);
@@ -30,6 +31,7 @@ export class IndexedDBService {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
+        console.log('db in request.onupgradeneeded 33 -> ', db);
 
         // Create object store for patients with workspace-specific naming
         const storeName = this.getStoreName();
@@ -60,10 +62,12 @@ export class IndexedDBService {
    * Store multiple patients in batch
    */
   async batchStore(patients: LocalMinifiedPatient[]): Promise<void> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) {
+      await this.init();
+    }
 
     const storeName = this.getStoreName();
-    if (!this.db.objectStoreNames.contains(storeName)) {
+    if (!this.db || !this.db.objectStoreNames.contains(storeName)) {
       // Close current connection and reinitialize
       this.close();
       await this.init();
@@ -224,7 +228,14 @@ export class IndexedDBService {
    * Check if any data exists
    */
   async hasData(): Promise<boolean> {
-    if (!this.db) throw new Error('Database not initialized');
+    if (!this.db) {
+      await this.init();
+    }
+
+    const storeName = this.getStoreName();
+    if (!this.db || !this.db.objectStoreNames.contains(storeName)) {
+      return false;
+    }
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([this.getStoreName()], 'readonly');
