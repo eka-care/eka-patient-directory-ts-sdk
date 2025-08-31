@@ -30,6 +30,7 @@ export class SearchMethods {
         // Initialize local search components if enabled
         if (config && config.workspaceId) {
             this.indexedDB = new IndexedDBService(config.workspaceId);
+            console.log("indexedDB in search methods -> ", this.indexedDB)
             this.dataLoader = new DataLoaderService(config);
         }
     }

@@ -86,8 +86,10 @@ export class TrinityProfilesSDK {
 
         // Set up IndexedDB update callback for patients
         if (config.workspaceId) {
+            console.log("config.workspaceId -> ", config.workspaceId)
             this.patients.setIndexedDBUpdateCallback(async (patient) => {
                 const indexedDB = this.search.getDataLoader()?.getIndexedDB();
+                console.log("indexedDB -> ", indexedDB)
                 if (indexedDB) {
                     await indexedDB.updatePatient(patient);
                 }
