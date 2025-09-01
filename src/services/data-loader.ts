@@ -135,22 +135,22 @@ export class DataLoaderService {
       console.log(patientsResponse, 'patients response');
       const patients = patientsResponse?.data || [];
 
-      if (patients.length === 0) {
-        break; // No more data
-      }
+      let localPatients: LocalMinifiedPatient[] = [];
 
-      // Convert to local format
-      const localPatients: LocalMinifiedPatient[] = patients.map((p) => ({
-        oid: p.oid,
-        u_ate: p.u_ate,
-        fln: p.fln,
-        mobile: p.mobile,
-        username: p.username,
-        gen: p.gen,
-        dob: p.dob,
-        is_age: p.is_age,
-        abha: p.abha,
-      }));
+      if (patients.length > 0) {
+        // Convert to local format
+        localPatients = patients.map((p) => ({
+          oid: p.oid,
+          u_ate: p.u_ate,
+          fln: p.fln,
+          mobile: p.mobile,
+          username: p.username,
+          gen: p.gen,
+          dob: p.dob,
+          is_age: p.is_age,
+          abha: p.abha,
+        }));
+      }
 
       // Store in IndexedDB
       await this.indexedDB.batchStore(localPatients);

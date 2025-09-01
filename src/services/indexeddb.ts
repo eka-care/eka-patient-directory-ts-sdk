@@ -83,6 +83,8 @@ export class IndexedDBService {
         const transaction = this.db!.transaction([this.getStoreName()], 'readwrite');
         const store = transaction.objectStore(this.getStoreName());
 
+        console.log('store -> batchstore -> IDBDatabase ', store);
+
         transaction.oncomplete = () => {
           console.log('Batch store transaction completed successfully');
           resolve();
@@ -92,7 +94,7 @@ export class IndexedDBService {
           reject(transaction.error);
         };
 
-        patients.forEach((patient) => {
+        patients?.forEach((patient) => {
           store.put(patient);
         });
       } catch (error) {
