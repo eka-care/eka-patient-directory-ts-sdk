@@ -29,7 +29,15 @@ import { HttpClient } from './client';
 import { PatientMethods } from './methods/patients';
 import { SearchMethods } from './methods/search';
 import { UtilsMethods } from './methods/utils';
-import { CreatePatientData, Environment, EnvironmentBaseUrl, Patient, SdkConfig } from './types';
+import {
+  ApiResponse,
+  CreatePatientData,
+  Environment,
+  EnvironmentBaseUrl,
+  Patient,
+  SdkConfig,
+  UpdatePatientData,
+} from './types';
 
 /**
  * Main SDK class
@@ -273,6 +281,9 @@ export class TrinityProfilesSDK {
   }
 
   // TO UPDATE PATIENT
+  async updatePatient(patient: { id: string; data: UpdatePatientData }): Promise<ApiResponse> {
+    return await this.patients.update(patient.id, patient.data);
+  }
 
   /**
    * Start background data synchronization
