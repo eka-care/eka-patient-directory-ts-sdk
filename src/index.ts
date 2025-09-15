@@ -276,7 +276,7 @@ export class TrinityProfilesSDK {
   }
 
   // TO CREATE PATIENT
-  async createPatient(patient: CreatePatientData): Promise<Patient | { oid: string }> {
+  async createPatient(patient: CreatePatientData): Promise<{ oid: string }> {
     return await this.patients.create(patient);
   }
 
