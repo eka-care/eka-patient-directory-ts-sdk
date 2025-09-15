@@ -132,7 +132,6 @@ export class DataLoaderService {
 
       // Fetch page data
       const patientsResponse = await this.minifiedMethods.getPage(page, limit);
-      console.log(patientsResponse, 'patients response');
       const patients = patientsResponse?.data || [];
 
       let localPatients: LocalMinifiedPatient[] = [];

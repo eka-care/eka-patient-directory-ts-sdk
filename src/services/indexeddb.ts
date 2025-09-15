@@ -19,9 +19,7 @@ export class IndexedDBService {
    */
   async init(): Promise<void> {
     return new Promise((resolve, reject) => {
-      console.log('init in indexeddb 22 -> ', this.dbName, this.version, this.getStoreName());
       const request = indexedDB.open(this.dbName, this.version + 1);
-      console.log('request in indexeddb -> ', request);
 
       request.onerror = () => reject(request.error);
       request.onsuccess = () => {
@@ -31,15 +29,11 @@ export class IndexedDBService {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
-        console.log('db in request.onupgradeneeded 33 -> ', db);
 
         // Create object store for patients with workspace-specific naming
         const storeName = this.getStoreName();
-        console.log('storeName in indexeddb 36 -> ', storeName);
         if (!db.objectStoreNames.contains(storeName)) {
-          console.log('storeName in indexeddb 37 -> ', storeName);
           const store = db.createObjectStore(storeName, { keyPath: 'oid' });
-          console.log('store in indexeddb 38 -> ', store);
 
           // Create indexes for search fields
           store.createIndex('fln', 'fln', { unique: false });
@@ -83,14 +77,10 @@ export class IndexedDBService {
         const transaction = this.db!.transaction([this.getStoreName()], 'readwrite');
         const store = transaction.objectStore(this.getStoreName());
 
-        console.log('store -> batchstore -> IDBDatabase ', store);
-
         transaction.oncomplete = () => {
-          console.log('Batch store transaction completed successfully');
           resolve();
         };
         transaction.onerror = () => {
-          console.error('Batch store transaction error:', transaction.error);
           reject(transaction.error);
         };
 
