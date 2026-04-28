@@ -129,8 +129,13 @@ export class SearchMethods {
    */
 
   // SEARCH PATIENT BY PREFIX
-  async searchByPrefix(prefix: string, limit: number = 50, select?: string): Promise<Patient[]> {
-    return this.search({ prefix, limit, select });
+  async searchByPrefix(
+    prefix: string,
+    limit: number = 50,
+    select?: string,
+    forceApiSearch: boolean = false
+  ): Promise<Patient[]> {
+    return this.search({ prefix, limit, select }, forceApiSearch);
   }
 
   /**
