@@ -268,9 +268,10 @@ export class TrinityProfilesSDK {
   async searchPatientByPrefix(
     prefix: string,
     limit: number = 50,
-    select?: string
+    select?: string,
+    forceApiSearch: boolean = false
   ): Promise<Patient[]> {
-    return await this.search.searchByPrefix(prefix, limit, select);
+    return await this.search.searchByPrefix(prefix, limit, select, forceApiSearch);
   }
 
   // TO CREATE PATIENT
