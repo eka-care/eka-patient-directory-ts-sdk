@@ -19,6 +19,28 @@ export type Persona = "P";
 export type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
 
 /**
+ * Extra minified patient fields
+ */
+export type ExtraMinifiedPatientFields = "dob" | "gen" | "abha" | "u_ate" | "is_age";
+
+/**
+ * Extra patient fields
+ */
+export type DefaultMinifiedPatientFields = ["oid", "fln", "mobile", "username"];
+
+/**
+ * Environment related base url
+ */
+export enum Environment {
+    PROD = "PROD",
+    DEV = "DEV",
+}
+export const EnvironmentBaseUrl: Record<Environment, string> = {
+    [Environment.PROD]: "https://api.eka.care",
+    [Environment.DEV]: "https://aortago.dev.eka.care",
+}
+
+/**
  * Patient profile creation data (matches CreateBusinessPatientSz V2)
  */
 export interface CreatePatientData {
@@ -96,14 +118,10 @@ export interface UpdatePatientData {
 export interface Patient {
     /** Unique identifier */
     oid: string;
-    /** Workspace ID */
-    wid: string;
-    /** Persona */
-    ps: Persona;
     /** Creation timestamp (epoch) */
-    c_ate: number;
+    c_ate?: number;
     /** Update timestamp (epoch) */
-    u_ate: number;
+    u_ate?: number;
     /** Audience of the creator */
     c_aud?: string;
 
@@ -118,7 +136,7 @@ export interface Patient {
     /** Last name */
     ln?: string;
     /** Full name */
-    fln?: string;
+    fln: string;
 
     /** Country code */
     ccd?: string;
@@ -142,8 +160,6 @@ export interface Patient {
 
     /** Additional arbitrary data */
     extras?: Record<string, any>;
-    /** Old OID */
-    old_oid?: string;
 }
 
 /**
@@ -153,19 +169,21 @@ export interface MinifiedPatient {
     /** Unique identifier */
     oid: string;
     /** Full name */
-    fln?: string;
+    fln: string;
     /** Mobile number */
     mobile?: string;
-    /** Email address */
-    email?: string;
+    /** Abha address */
+    abha?: string;
     /** Username */
     username?: string;
     /** Gender */
-    gen: Gender;
+    gen?: Gender;
     /** Date of birth */
-    dob: string;
-    /** Is profile archived */
-    arc?: boolean;
+    dob?: string;
+    /** Flag to indicate if dob was calculated from age */
+    is_age?: boolean;
+    /** Update timestamp (epoch) */
+    u_ate?: number;
 }
 
 /**
@@ -236,22 +254,31 @@ export interface PaginatedResponse<T> {
 export interface LocalMinifiedPatient {
     /** Unique identifier */
     oid: string;
-    /** Update timestamp (epoch) */
-    u_ate: number;
     /** Full name */
-    fln?: string;
+    fln: string;
     /** Mobile number */
     mobile?: string;
     /** Username */
     username?: string;
+    /** abha address */
+    abha?: string;
+    /** Gender */
+    gen?: Gender;
+    /** Date of birth */
+    dob?: string;
+    /** Update timestamp (epoch) */
+    u_ate?: number;
+    /** Flag to indicate if dob was calculated from age */
+    is_age?: boolean;
 }
+
 
 /**
  * SDK Configuration options
  */
 export interface SdkConfig {
     /** Base URL for the API */
-    baseUrl: string;
+    env?: Environment;
     /** Access token for authentication */
     accessToken?: string;
     /** Workspace ID for local data storage */
@@ -259,4 +286,7 @@ export interface SdkConfig {
     /** Request timeout in milliseconds */
     timeout?: number;
     /** Enable local search functionality */
+    baseUrl?: string;
+    /** Extra minified patient fields */
+    extraMinifiedPatientFields?: ExtraMinifiedPatientFields[];
 }
