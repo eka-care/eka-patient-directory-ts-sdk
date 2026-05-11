@@ -36,9 +36,11 @@ export interface HttpResponse<T = any> {
  */
 export class HttpClient {
   private readonly baseUrl: string;
-  private readonly accessToken: string;
+  private accessToken: string;
   private readonly timeout: number;
   private readonly config: SdkConfig;
+  private readonly onUnauthorized?: () => Promise<string | null>;
+  private refreshPromise: Promise<string | null> | null = null;
 
   constructor(config: SdkConfig) {
     this.baseUrl = (config.baseUrl || EnvironmentBaseUrl[config.env || Environment.PROD]).replace(
@@ -48,6 +50,7 @@ export class HttpClient {
     this.accessToken = config.accessToken || '';
     this.timeout = config.timeout || 30000; // 30 seconds default
     this.config = config;
+    this.onUnauthorized = config.onUnauthorized;
   }
 
   /**
@@ -63,9 +66,51 @@ export class HttpClient {
   }
 
   /**
-   * Make HTTP request
+   * Update the in-memory access token. Used by the 401 retry path and by
+   * external callers that want to swap the token without rebuilding the client.
    */
-  async request<T = any>(options: RequestOptions): Promise<HttpResponse<T>> {
+  setAccessToken(token: string): void {
+    this.accessToken = token;
+  }
+
+  /**
+   * Deduped token refresh. Concurrent 401s await the same in-flight promise
+   * so the onUnauthorized callback fires at most once per refresh cycle.
+   * The callback is bounded to 10s; on timeout we resolve to null (the 401
+   * surfaces as AuthenticationError) and let the next 401 trigger a fresh
+   * attempt.
+   */
+  private getRefreshedToken(): Promise<string | null> {
+    if (!this.onUnauthorized) {
+      return Promise.resolve(null);
+    }
+    if (!this.refreshPromise) {
+      this.refreshPromise = (async () => {
+        const REFRESH_TIMEOUT_MS = 10000;
+        let timeoutId: ReturnType<typeof setTimeout> | undefined;
+        const timeoutPromise = new Promise<null>((resolve) => {
+          timeoutId = setTimeout(() => resolve(null), REFRESH_TIMEOUT_MS);
+        });
+        try {
+          return await Promise.race([this.onUnauthorized!(), timeoutPromise]);
+        } finally {
+          if (timeoutId) clearTimeout(timeoutId);
+          this.refreshPromise = null;
+        }
+      })();
+    }
+    return this.refreshPromise;
+  }
+
+  /**
+   * Make HTTP request.
+   *
+   * On HTTP 401, if an `onUnauthorized` callback was configured, the SDK
+   * invokes it once to obtain a fresh token and retries the request a single
+   * time. HTTP 403 is treated as a hard authorization failure and is NOT
+   * retried — `AuthorizationError` propagates directly to the caller.
+   */
+  async request<T = any>(options: RequestOptions, isRetry: boolean = false): Promise<HttpResponse<T>> {
     const url = this.buildUrl(options.path, options.params);
     const headers = this.buildHeaders(options.headers);
     headers['client-id'] = 'pt-directory-sdk';
@@ -97,6 +142,16 @@ export class HttpClient {
 
       // Handle error responses
       if (!response.ok) {
+        // 401 → attempt one token refresh + retry. 403 is intentionally
+        // excluded: an authorization failure is not fixable by a new token.
+        if (response.status === 401 && !isRetry && this.onUnauthorized) {
+          const newToken = await this.getRefreshedToken();
+          if (newToken) {
+            this.setAccessToken(newToken);
+            return this.request<T>(options, true);
+          }
+        }
+
         const errorMessage = this.extractErrorMessage(data);
         throw createErrorFromResponse(response.status, errorMessage, data);
       }

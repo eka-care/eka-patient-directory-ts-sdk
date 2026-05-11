@@ -289,4 +289,11 @@ export interface SdkConfig {
     baseUrl?: string;
     /** Extra minified patient fields */
     extraMinifiedPatientFields?: ExtraMinifiedPatientFields[];
+    /**
+     * Invoked on HTTP 401 to obtain a fresh access token.
+     * Return the new token string to retry the original request once,
+     * or `null` to abort and surface AuthenticationError to the caller.
+     * Concurrent 401s share a single in-flight invocation.
+     */
+    onUnauthorized?: () => Promise<string | null>;
 }
